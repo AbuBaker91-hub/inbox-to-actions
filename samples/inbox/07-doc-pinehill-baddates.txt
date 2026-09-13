@@ -1,0 +1,13 @@
+Message-ID: <sample-07-doc-pinehill-baddates@inbox-to-actions.local>
+From: Pine Hill Admin <admin@pinehillgroup.example.com>
+Subject: Agreement PIN-7742 for recording
+Date: Wed, 09 Sep 2026 11:15:00 +0000
+X-Attachment: agreement-pinehill-pin7742.pdf
+
+Dear records team,
+
+Attached is agreement PIN-7742 between Pine Hill Group and Marsh & Sons LLC.
+Please record the deal and its dates. Note: the document was assembled in a
+hurry, so do double-check it.
+
+Pine Hill Group

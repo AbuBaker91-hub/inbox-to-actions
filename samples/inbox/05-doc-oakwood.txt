@@ -1,0 +1,14 @@
+Message-ID: <sample-05-doc-oakwood@inbox-to-actions.local>
+From: Oakwood Contracts <contracts@oakwoodventures.example.com>
+Subject: Executed agreement OAK-1189 attached
+Date: Tue, 08 Sep 2026 14:20:00 +0000
+X-Attachment: agreement-oakwood-oak1189.pdf
+
+Hello,
+
+Attached is the executed purchase and sale agreement OAK-1189 between Oakwood
+Ventures LP and Gonzalez Properties Inc. Please enter the milestone dates into
+your system.
+
+Thank you,
+Oakwood Ventures LP

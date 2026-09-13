@@ -1,0 +1,15 @@
+Message-ID: <sample-08-other-newsletter@inbox-to-actions.local>
+From: PropTech Weekly <newsletter@proptechweekly.example.com>
+Subject: This week in PropTech: 5 trends you can't ignore
+Date: Wed, 09 Sep 2026 16:00:00 +0000
+
+PROPTECH WEEKLY - ISSUE #214
+
+1. Smart locks are eating the lockbox market
+2. Why every brokerage needs a data strategy
+3. Interview: the CTO behind the fastest-growing listing portal
+4. Tooling roundup: CRMs compared
+5. Event calendar for October
+
+You are receiving this because you subscribed at proptechweekly.example.com.
+Unsubscribe: https://proptechweekly.example.com/unsubscribe

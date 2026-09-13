@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>inbox-to-actions</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --border: #e3e6ea; --text: #1c2430;
+    --muted: #6b7482; --accent: #2563eb; --accent-soft: #eff4ff;
+    --green: #15803d; --green-soft: #ecfdf3; --amber: #b45309; --amber-soft: #fffaeb;
+    --gray-soft: #f1f3f5; --red: #b91c1c; --red-soft: #fef2f2;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  header {
+    display: flex; align-items: center; gap: 16px; padding: 14px 24px;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 5;
+  }
+  header h1 { font-size: 17px; margin: 0; letter-spacing: -0.2px; }
+  header h1 span { color: var(--accent); }
+  .tabs { display: flex; gap: 4px; margin-left: 12px; }
+  .tab {
+    border: 0; background: none; padding: 7px 14px; border-radius: 8px;
+    font: inherit; font-weight: 500; color: var(--muted); cursor: pointer;
+  }
+  .tab.active { background: var(--accent-soft); color: var(--accent); }
+  .tab .pill {
+    display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 6px;
+    border-radius: 9px; background: var(--amber); color: #fff; font-size: 11px;
+    line-height: 18px; text-align: center;
+  }
+  .tab .pill:empty { display: none; }
+  .spacer { flex: 1; }
+  .btn {
+    border: 1px solid var(--border); background: var(--panel); color: var(--text);
+    padding: 7px 14px; border-radius: 8px; font: inherit; font-weight: 500; cursor: pointer;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { opacity: .9; color: #fff; }
+  .btn.danger { color: var(--red); }
+  .btn.danger:hover { border-color: var(--red); }
+  main { max-width: 1100px; margin: 24px auto; padding: 0 24px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-bottom: 16px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 14px; border-top: 1px solid var(--border); }
+  thead th {
+    border-top: 0; font-size: 12px; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--muted); background: #fafbfc;
+  }
+  tbody tr.clickable { cursor: pointer; }
+  tbody tr.clickable:hover { background: #fafcff; }
+  .badge {
+    display: inline-block; padding: 2px 9px; border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+  }
+  .badge.lead { background: var(--accent-soft); color: var(--accent); }
+  .badge.document { background: #f3eefc; color: #7c3aed; }
+  .badge.status_update { background: var(--gray-soft); color: var(--muted); }
+  .badge.other { background: var(--gray-soft); color: var(--muted); }
+  .badge.unknown { background: var(--gray-soft); color: var(--muted); }
+  .badge.written { background: var(--green-soft); color: var(--green); }
+  .badge.review { background: var(--amber-soft); color: var(--amber); }
+  .badge.skipped { background: var(--gray-soft); color: var(--muted); }
+  .badge.error, .badge.rejected { background: var(--red-soft); color: var(--red); }
+  .badge.new { background: var(--gray-soft); color: var(--muted); }
+  .muted { color: var(--muted); }
+  .mono { font-family: var(--mono); font-size: 13px; }
+  .empty { padding: 32px; text-align: center; color: var(--muted); }
+  /* review cards */
+  .review-card { padding: 18px; }
+  .review-card h3 { margin: 0 0 2px; font-size: 15px; }
+  .review-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px; margin: 14px 0; }
+  .fields label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  .fields input, .fields textarea {
+    width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px;
+    font: inherit; font-size: 14px; background: #fff;
+  }
+  .fields input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+  .actions { display: flex; gap: 8px; }
+  /* CRM subtabs */
+  .subtabs { display: flex; gap: 4px; margin-bottom: 14px; }
+  /* detail drawer */
+  #overlay {
+    display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, .45); z-index: 10;
+  }
+  #overlay.open { display: block; }
+  #drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 92vw);
+    background: var(--panel); border-left: 1px solid var(--border); z-index: 11;
+    transform: translateX(100%); transition: transform .18s ease; overflow-y: auto;
+    padding: 22px;
+  }
+  #drawer.open { transform: none; }
+  #drawer h2 { margin: 0 0 4px; font-size: 17px; }
+  #drawer .close { position: absolute; top: 14px; right: 14px; }
+  #drawer section { margin-top: 18px; }
+  #drawer section h4 {
+    margin: 0 0 8px; font-size: 12px; text-transform: uppercase;
+    letter-spacing: .05em; color: var(--muted);
+  }
+  pre {
+    background: #f8f9fb; border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px;
+    white-space: pre-wrap; word-break: break-word; margin: 0;
+  }
+  .audit-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px dashed var(--border);
+               font-size: 13px; align-items: baseline; }
+  .audit-row:last-child { border-bottom: 0; }
+  .audit-stage { font-weight: 600; width: 70px; flex: none; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; align-self: center; }
+  .dot.ok { background: var(--green); } .dot.fail { background: var(--red); }
+  #toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: #fff; padding: 10px 18px; border-radius: 10px;
+    font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20;
+  }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>inbox<span>&rarr;</span>actions</h1>
+    <nav class="tabs">
+      <button class="tab active" data-panel="inbox">Inbox</button>
+      <button class="tab" data-panel="review">Review <span class="pill" id="review-count"></span></button>
+      <button class="tab" data-panel="crm">CRM</button>
+    </nav>
+    <div class="spacer"></div>
+    <button class="btn primary" id="ingest-btn">Run ingest</button>
+  </header>
+
+  <main>
+    <div class="panel active" id="panel-inbox">
+      <div class="card">
+        <table>
+          <thead><tr><th>#</th><th>From</th><th>Subject</th><th>Category</th><th>Confidence</th><th>Outcome</th></tr></thead>
+          <tbody id="inbox-body"><tr><td colspan="6" class="empty">Loading&hellip;</td></tr></tbody>
+        </table>
+      </div>
+      <p class="muted">Click a row for the extraction and full audit trail. New files dropped
+      into <span class="mono">inbox/</span> are picked up by the 30-second timer.</p>
+    </div>
+
+    <div class="panel" id="panel-review">
+      <div id="review-list"></div>
+    </div>
+
+    <div class="panel" id="panel-crm">
+      <nav class="subtabs">
+        <button class="tab active" data-crm="contacts">Contacts</button>
+        <button class="tab" data-crm="deals">Deals</button>
+        <button class="tab" data-crm="activities">Activities</button>
+      </nav>
+      <div class="card">
+        <table>
+          <thead id="crm-head"></thead>
+          <tbody id="crm-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div id="overlay"></div>
+  <aside id="drawer"></aside>
+  <div id="toast"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
