@@ -18,6 +18,28 @@ records automatically — and routes anything uncertain to a human instead of gu
 - Records one audit row per pipeline stage, visible per email in the UI
 - 60-second walkthrough: (Loom video coming soon) · try it yourself: (live demo coming soon)
 
+**Inbox** — 12 sample emails triaged with category, confidence and outcome:
+
+![Inbox panel with 12 triaged emails](docs/screenshots/01-inbox-panel-12-emails.png)
+
+**Guardrail in action** — an agreement whose closing date precedes its acceptance
+date is stopped with reason `date_order` instead of being written:
+
+![Bad-dates document flagged for review](docs/screenshots/02-bad-dates-document-review-reason.png)
+
+**Human review queue** — editable extracted fields with Approve / Reject:
+
+![Review queue with three pending items](docs/screenshots/03-review-queue-3-pending.png)
+
+**Audit trail** — one row per stage (ingest → classify → extract → validate → act),
+with prompt version and the provider that answered:
+
+![Email detail with full audit trail](docs/screenshots/11-email-detail-audit-trail.png)
+
+**CRM deals** — upserted by reference with amounts and key dates:
+
+![CRM deals tab](docs/screenshots/09-crm-deals-references-amounts.png)
+
 ## Architecture
 
 ```mermaid
