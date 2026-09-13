@@ -16,7 +16,7 @@ records automatically — and routes anything uncertain to a human instead of gu
 - Writes contacts, deals and activities idempotently — reprocessing an email or double-clicking Approve can never write twice
 - Puts every uncertain item in a human review queue with editable fields and Approve / Reject
 - Records one audit row per pipeline stage, visible per email in the UI
-- [▶ Watch the 25-second demo video](docs/inbox-to-actions-demo.mp4) · try it yourself: (live demo coming soon)
+- [▶ Watch the 25-second demo video](docs/inbox-to-actions-demo.mp4) · try it yourself: [Try the live demo](https://inbox-to-actions.vercel.app)
 
 **Inbox** — 12 sample emails triaged with category, confidence and outcome:
 
