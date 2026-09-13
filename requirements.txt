@@ -1,0 +1,5 @@
+# Runtime dependencies for the Vercel Python serverless function.
+# Dev/test tooling lives in pyproject.toml [project.optional-dependencies].
+aiforge-core @ git+https://github.com/AbuBaker91-hub/aiforge-core@v0.1.0
+fastapi>=0.115
+pypdf>=4.0
